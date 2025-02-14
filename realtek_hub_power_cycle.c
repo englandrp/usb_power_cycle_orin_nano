@@ -5,26 +5,27 @@
 #include <unistd.h>
 #include <libusb-1.0/libusb.h>
 
+// 0bda:0489
 unsigned		vid = 0x0bda;
 //unsigned		pid = 0x5411;//Jetson NANO DEvKit
 unsigned		pid = 0x5489;//Jetson Xavier NX
-
+//unsigned		pid = 0x0489;
 
 int power_cycle(libusb_device_handle *hub_devh)
 {
         int ret = -1;
 
-        /*ep0 vendor command enable*/
-        ret = libusb_control_transfer(hub_devh, 0x40, 0x02, 0x01, ((0x0B<<8)|(0xDA)), 0, 0, 100000);
+        /* ep0 vendor command enable */
+        ret = libusb_control_transfer(hub_devh, 0x40, 0x02, 0x01, ((0x0B << 8) | 0xDA), NULL, 0, 5000);
         if (ret < 0) {
-                printf("[error]:ep0 vendor command enable fail.\n");
+                printf("[error]: ep0 vendor command enable fail.\n");
                 return ret;
         }
 
-        /*ep0 vendor command disable*/
-        libusb_control_transfer(hub_devh, 0x40, 0x1, 0x08, 0, NULL, 0, 100);
-        libusb_control_transfer(hub_devh, 0x40, 0x3, 0x08, 0, NULL, 0, 100);
-        libusb_control_transfer(hub_devh, 0x40, 0x02, 0x00, ((0x0B<<8)|(0xDA)), 0, 0, 100000);
+        /* ep0 vendor command disable */
+        libusb_control_transfer(hub_devh, 0x40, 0x01, 0x08, 0, NULL, 0, 100);
+        libusb_control_transfer(hub_devh, 0x40, 0x03, 0x08, 0, NULL, 0, 100);
+        libusb_control_transfer(hub_devh, 0x40, 0x02, 0x00, ((0x0B << 8) | 0xDA), NULL, 0, 5000);
 
         return ret;
 }
